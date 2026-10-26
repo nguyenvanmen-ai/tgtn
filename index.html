@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ôn trắc nghiệm - Tình hình tôn giáo trên thế giới và ở Việt Nam</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--tx:#1d2433;--mut:#5d667a;--bd:#d9deea;--pri:#2e5597;--pritx:#fff;--ok:#1e8e4e;--okbg:#e4f5ea;--no:#c0392b;--nobg:#fbe9e7}
+@media (prefers-color-scheme:dark){:root{--bg:#12151c;--card:#1b2030;--tx:#e8ebf3;--mut:#9aa3b8;--bd:#2f364b;--pri:#6c9bf0;--pritx:#0d1220;--ok:#4cc382;--okbg:#17332551;--no:#ff7b6b;--nobg:#3a1c1951}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--tx);font-family:"Segoe UI",Roboto,Arial,sans-serif;line-height:1.5;padding:16px}
+.wrap{max-width:760px;margin:0 auto}
+h1{font-size:1.35rem;margin:8px 0 4px}
+.sub{color:var(--mut);margin:0 0 16px;font-size:.95rem}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:18px;margin-bottom:14px}
+label.row{display:flex;gap:10px;align-items:center;padding:8px 0;cursor:pointer}
+.btn{background:var(--pri);color:var(--pritx);border:0;border-radius:10px;padding:12px 18px;font-size:1rem;font-weight:600;cursor:pointer}
+.btn.sec{background:transparent;color:var(--pri);border:1px solid var(--pri)}
+.btn:disabled{opacity:.45;cursor:default}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.bar{height:8px;background:var(--bd);border-radius:6px;overflow:hidden;margin:8px 0 14px}
+.bar>i{display:block;height:100%;background:var(--pri);width:0;transition:width .25s}
+.meta{display:flex;justify-content:space-between;color:var(--mut);font-size:.9rem}
+.q{font-size:1.1rem;font-weight:600;margin:6px 0 14px}
+.opt{display:flex;gap:10px;width:100%;text-align:left;background:var(--card);color:var(--tx);border:1.5px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:9px;font-size:1rem;cursor:pointer;font-family:inherit}
+.opt:hover:not(:disabled){border-color:var(--pri)}
+.opt b.l{min-width:1.4em;color:var(--pri)}
+.opt.ok{border-color:var(--ok);background:var(--okbg)}
+.opt.no{border-color:var(--no);background:var(--nobg)}
+.opt:disabled{cursor:default}
+.fb{margin-top:6px;font-weight:600}
+.fb.ok{color:var(--ok)}.fb.no{color:var(--no)}
+.score{font-size:2.2rem;font-weight:700;color:var(--pri);margin:4px 0}
+.wr{border-top:1px solid var(--bd);padding:12px 0}
+.wr .a{color:var(--ok);font-weight:600}.wr .y{color:var(--no)}
+.hide{display:none}
+input[type=text]{width:100%;font-size:1rem;padding:12px;border-radius:10px;border:1.5px solid var(--bd);background:var(--card);color:var(--tx);font-family:inherit}
+select{font-size:1rem;padding:6px;border-radius:8px;border:1px solid var(--bd);background:var(--card);color:var(--tx)}
+input[type=text]{width:100%;font-size:1rem;padding:11px;border-radius:10px;border:1.5px solid var(--bd);background:var(--card);color:var(--tx);font-family:inherit}
+.err{color:var(--no);font-size:.9rem;margin-top:6px}
+.opt.sel{border-color:var(--pri);background:var(--okbg)}
+.wr .y.n{color:var(--mut)}
+.timer{font-weight:700;font-variant-numeric:tabular-nums;font-size:1.15rem;color:var(--pri)}
+.timer.low{color:var(--no)}
+.tbox{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.note{background:var(--nobg);color:var(--no);border-radius:10px;padding:8px 12px;margin-bottom:10px;font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Ôn trắc nghiệm – Tình hình tôn giáo trên thế giới và ở Việt Nam</h1>
+<p class="sub">Bài 2 · <span id="total"></span> câu · Chọn đáp án, nộp bài để xem kết quả</p>
+
+<section id="start" class="card">
+  <p style="margin-top:0"><b>Họ và tên</b></p>
+  <input type="text" id="name" maxlength="60" placeholder="Nhập họ tên của bạn" autocomplete="name">
+  <div id="nameErr" class="err hide">Vui lòng nhập họ tên trước khi làm bài.</div>
+  <p><b>Tùy chọn làm bài</b></p>
+  <p class="sub" style="margin:0 0 4px">Mỗi bài gồm <b>20 câu</b> ngẫu nhiên.</p>
+  <label class="row">Thời gian mỗi câu:&nbsp;<select id="tpq"></select></label>
+  <div id="tsum" class="sub" style="margin:0 0 6px"></div>
+  <label class="row"><input type="checkbox" id="shuffleQ" checked> Xáo trộn thứ tự câu hỏi</label>
+  <label class="row"><input type="checkbox" id="shuffleA" checked> Xáo trộn thứ tự đáp án</label>
+  <label class="row"><input type="checkbox" id="instant"> Hiện đúng/sai ngay sau mỗi câu (bỏ chọn = chỉ xem kết quả khi nộp bài)</label>
+  <p id="best" class="sub" style="margin:8px 0 0"></p>
+  <div class="btns"><button class="btn" id="go">Bắt đầu làm bài</button></div>
+</section>
+
+<section id="quiz" class="hide">
+  <div class="card">
+    <div class="tbox"><span class="timer" id="tm">00:00</span><span class="meta" style="gap:14px"><span id="pos"></span><span id="sc"></span></span></div>
+    <div class="bar"><i id="pb"></i></div>
+    <div class="q" id="qt"></div>
+    <div id="opts"></div>
+    <div class="fb" id="fb"></div>
+    <div class="btns"><button class="btn sec" id="prev">Câu trước</button><button class="btn" id="next">Câu tiếp</button><button class="btn sec" id="quit">Thoát</button></div>
+  </div>
+</section>
+
+<section id="result" class="hide">
+  <div class="card">
+    <div id="tnote" class="note hide"></div>
+    <div>Họ và tên: <b id="rn"></b></div>
+    <div style="margin-top:6px">Số câu đúng / tổng số câu</div>
+    <div class="score" id="rs"></div>
+    <div id="rm" class="sub"></div>
+    <div id="ru" class="sub"></div>
+    <div class="btns">
+      <button class="btn" id="again">Làm lại</button>
+      <button class="btn sec" id="redo">Làm lại các câu sai</button>
+      <button class="btn sec" id="home">Về đầu</button>
+    </div>
+  </div>
+  <div class="card hide" id="wrongBox"><b>Các câu làm sai</b><div id="wl"></div></div>
+</section>
+</div>
+
+<script>
+const DATA = [["Sau Chiến tranh lạnh kết thúc (1991), cục diện thế giới chuyển biến theo hướng nào?", "Đa cực, đa tầng, phân mảnh, phân tuyến", "Một cực duy nhất do Mỹ chi phối", "Hai cực Xô - Mỹ được củng cố", "Thống nhất hoàn toàn, không còn cạnh tranh"], ["Từ năm 1991 đến năm 2000, có trên 100 cuộc chiến tranh, xung đột vũ trang quy mô lớn; trên bao nhiêu % liên quan trực tiếp đến vấn đề tôn giáo và dân tộc?", "Trên 90%", "Trên 50%", "Trên 70%", "Trên 30%"], ["Vì sao Mỹ vẫn là cường quốc lớn nhất nhưng không nắm được độc quyền bá chủ thế giới?", "Do sự trỗi dậy và xích lại gần nhau giữa Trung Quốc, Ấn Độ và Nga", "Do khối NATO tan rã hoàn toàn", "Do Mỹ suy giảm hoàn toàn về quốc phòng", "Do Liên minh châu Âu thay thế vị trí của Mỹ"], ["Khu vực nào được xác định là trung tâm phát triển năng động nhất thế giới nhưng cũng là khu vực trọng điểm cạnh tranh chiến lược giữa các nước lớn?", "Châu Á - Thái Bình Dương và Ấn Độ Dương", "Châu Âu và Bắc Mỹ", "Trung Đông và Bắc Phi", "Châu Phi cận Sahara"], ["Theo số liệu của Oxfam năm 2024, 1,0% người giàu nhất sở hữu bao nhiêu % tổng tài sản của nhân loại?", "45%", "25%", "60%", "10%"], ["Theo báo cáo G20 được giáo trình dẫn, tại 83% quốc gia - nơi sinh sống của bao nhiêu % dân số thế giới - bất bình đẳng gia tăng?", "90%", "50%", "70%", "30%"], ["Nhân tố nào vừa thúc đẩy phân công lao động quốc tế và các dòng người di cư mang theo tôn giáo, vừa tạo môi trường để tôn giáo phát triển vượt biên giới quốc gia?", "Toàn cầu hóa", "Chiến tranh lạnh", "Chủ nghĩa dân tộc cực đoan", "Suy thoái môi trường"], ["Thành tựu khoa học công nghệ (Cách mạng công nghiệp 4.0) tác động như thế nào đến đời sống tôn giáo?", "Cung cấp phương tiện truyền đạo mới nhưng làm giảm tính “thiêng”, thế tục hóa đời sống tôn giáo", "Chỉ làm tôn giáo suy giảm hoàn toàn", "Chỉ làm tăng tính “thiêng” của tôn giáo", "Không có tác động gì đến tôn giáo"], ["Khủng hoảng niềm tin vào mô hình xã hội nào được nêu là điều kiện thuận lợi cho tôn giáo phát triển những thập niên gần đây?", "Mô hình chủ nghĩa xã hội hiện thực ở Đông Âu và Liên Xô sau 70 năm tồn tại", "Mô hình tư bản chủ nghĩa ở Mỹ", "Mô hình phong kiến ở châu Á", "Mô hình kinh tế thị trường ở ASEAN"], ["Sau Chiến tranh thế giới thứ hai, tôn giáo suy giảm nhanh; đến thập niên nào tôn giáo phục hồi và phát triển trở lại?", "Những năm 70 của thế kỷ XX", "Những năm 50 của thế kỷ XX", "Những năm 90 của thế kỷ XX", "Đầu thế kỷ XXI"], ["Từ năm 1970 đến năm 2000, tín đồ tôn giáo tăng 55%, số người không theo tôn giáo thay đổi như thế nào?", "Giảm 4,6%, xuống còn 15,2% dân số thế giới", "Tăng 4,6%, lên 25,2% dân số thế giới", "Giảm 15,2%, xuống còn 4,6% dân số thế giới", "Không thay đổi"], ["Năm 2025, Công giáo có khoảng bao nhiêu tín đồ và đứng vị trí nào về số lượng tín đồ?", "1,406 tỷ, vị trí thứ hai", "1,406 tỷ, vị trí thứ nhất", "870 triệu, vị trí thứ hai", "1,92 tỷ, vị trí thứ nhất"], ["Tôn giáo nào tăng nhanh nhất và có số lượng tín đồ nhiều nhất thế giới hiện nay?", "Hồi giáo", "Công giáo", "Tin lành", "Phật giáo"], ["Tín đồ Hồi giáo từ 600 triệu người (1970) tăng lên bao nhiêu vào năm 2020?", "1,92 tỷ người", "1,2 tỷ người", "870 triệu người", "535 triệu người"], ["Tín đồ Tin lành từ 363,7 triệu người (1970) tăng lên bao nhiêu vào năm 2023?", "870 triệu người", "535 triệu người", "1,2 tỷ người", "285 triệu người"], ["Ấn Độ giáo phát triển nhanh chủ yếu do nguyên nhân nào?", "Gia tăng dân số tự nhiên của người Ấn Độ và sự cải đạo ở một số nơi", "Sự truyền đạo bằng chiến tranh", "Chính sách quốc đạo của các nước phương Tây", "Sự sáp nhập với Phật giáo"], ["Phật giáo có 235 triệu tín đồ (1970), tăng lên 535 triệu (2020); khoảng bao nhiêu % tín đồ sống ở các nước châu Á?", "Gần 99%", "Khoảng 60%", "Khoảng 80%", "Khoảng 40%"], ["Chính thống giáo có 142 triệu tín đồ năm 1970, đến năm 2020 tăng lên bao nhiêu?", "285 triệu tín đồ", "535 triệu tín đồ", "142 triệu tín đồ (không đổi)", "870 triệu tín đồ"], ["Hiện tượng tôn giáo mới xuất hiện đầu tiên ở đâu, vào thời gian nào?", "Ở Mỹ, vào những năm 1960", "Ở châu Âu, vào thế kỷ XVI", "Ở Nhật Bản, vào những năm 1990", "Ở Trung Đông, vào những năm 1979"], ["Năm 2000, thế giới có trên 20.000 tổ chức tôn giáo mới; nước nào có khoảng 10.000 tổ chức?", "Nga", "Mỹ", "Anh", "Nhật Bản"], ["Số người theo các hiện tượng tôn giáo mới đạt đỉnh năm 2000 với 138,26 triệu người, đến năm 2020 còn bao nhiêu?", "65,5 triệu người", "100 triệu người", "200 triệu người", "13,8 triệu người"], ["Chỉ số đa dạng tôn giáo toàn cầu năm 2020 là bao nhiêu điểm (thang 0-10)?", "4,4 điểm", "4,5 điểm", "4,3 điểm", "2,7 điểm"], ["Đa dạng hóa tôn giáo thể hiện ở ba cấp độ nào?", "Tôn giáo, xã hội và thể chế", "Tín đồ, chức sắc và cơ sở thờ tự", "Kinh tế, chính trị và văn hóa", "Quốc gia, khu vực và thế giới"], ["Thế tục hóa tôn giáo bắt đầu xuất hiện từ phong trào nào?", "Cải cách tôn giáo ở châu Âu thế kỷ XVI, đặc biệt là triết học Ánh sáng", "Cách mạng công nghiệp lần thứ tư", "Cách mạng Hồi giáo Iran 1979", "Chiến tranh thế giới thứ hai"], ["Thế tục hóa tôn giáo trong quan hệ xã hội diễn ra trên hai phương diện nào?", "Thể chế và thực hành", "Kinh tế và chính trị", "Giáo lý và nghi lễ", "Quốc tế và khu vực"], ["Theo khảo sát của Trung tâm Nghiên cứu Pew tại 198 quốc gia, vùng lãnh thổ (đến 2017), có bao nhiêu quốc gia thừa nhận một tôn giáo làm quốc đạo hoặc tôn giáo chính, hoặc ưu tiên một tôn giáo?", "40 quốc gia", "80 quốc gia", "27 quốc gia", "13 quốc gia"], ["Hiện đại hóa tôn giáo là quá trình nào?", "“Lý giải lại” một số tín điều, cải biên hình thức tổ chức và sinh hoạt tôn giáo, gắn với thế tục hóa và chính trị hóa tôn giáo", "Quay trở lại nguyên bản giáo lý cổ truyền", "Loại bỏ hoàn toàn tôn giáo khỏi đời sống xã hội", "Chỉ ứng dụng công nghệ vào xây dựng nhà thờ"], ["Ngày 27/10/1986, tại Assisi (Italia), sự kiện nào thể hiện xu hướng khoan dung và đối thoại tôn giáo?", "Giáo hoàng Gioan Phaolô II và lãnh đạo các tôn giáo lớn cùng cầu nguyện cho hòa bình", "Hội nghị Liên tôn giáo thế giới với chủ đề “Tình anh em nhân loại”", "Hội nghị thế giới các giáo hội tại Vatican với 230 đại biểu", "Lễ kỷ niệm 500 năm Cải cách tôn giáo"], ["Hội nghị Liên tôn giáo thế giới tại Abu Dhabi (UAE) ngày 04/02/2019 có chủ đề và quy mô như thế nào?", "“Tình anh em nhân loại”, quy tụ 700 đại biểu", "“Hòa bình thế giới”, quy tụ 230 đại biểu", "“Tình anh em nhân loại”, quy tụ 230 đại biểu", "“Đối thoại Á - Âu”, quy tụ 700 đại biểu"], ["Xu hướng trở về với truyền thống văn hóa dân tộc xuất hiện nhằm mục đích chính nào?", "Chống nguy cơ bị đồng hóa về văn hóa trong bối cảnh toàn cầu hóa và cách mạng công nghiệp", "Xóa bỏ các tôn giáo ngoại lai", "Tăng cường xung đột giữa các tôn giáo", "Thúc đẩy ly khai"], ["Sự kiện nào được nêu là ví dụ tôn giáo được lực lượng chính trị dùng làm ngọn cờ tập hợp quần chúng?", "Cách mạng Hồi giáo ở Iran năm 1979", "Hội nghị Assisi năm 1986", "Cải cách tôn giáo thế kỷ XVI", "Đại lễ Vesak Liên hợp quốc"], ["Đặc điểm nổi bật của tôn giáo ở Việt Nam về mặt cấu trúc là gì?", "Đa dân tộc, đa tôn giáo, không có tôn giáo nào giữ vị trí độc tôn trong suốt lịch sử", "Một tôn giáo chủ đạo chiếm đa số dân số", "Chỉ có các tôn giáo ngoại nhập", "Các tôn giáo luôn đối đầu nhau"], ["Hệ thống tôn giáo nội sinh ở Việt Nam gồm những tôn giáo nào?", "Bửu Sơn Kỳ Hương, Tứ Ân Hiếu Nghĩa, Tịnh độ Cư sĩ Phật hội, Cao Đài, Phật giáo Hòa Hảo", "Bà La Môn giáo, Hồi giáo, Công giáo, Tin lành", "Phật giáo, Công giáo, Tin lành, Hồi giáo", "Chân không, Long Hoa Di Lặc, Hà Mòn"], ["Tính đan xen, hòa đồng của tôn giáo ở Việt Nam thể hiện trong điện thờ như thế nào?", "Trong ngôi chùa, bên cạnh Phật, Bồ tát, La hán còn có thần thánh của Nho giáo, Đạo giáo và tín ngưỡng dân gian", "Mỗi tôn giáo có điện thờ hoàn toàn tách biệt", "Chùa chỉ thờ Phật", "Chỉ Cao Đài mới có sự hội tụ nhiều thần linh"], ["Chủ tịch Hồ Chí Minh từng khẳng định điều gì về tôn giáo của người Việt Nam?", "“Người dân An Nam không có linh mục, không có tôn giáo, theo cách nghĩ của châu Âu”", "“Tôn giáo là thuốc phiện của nhân dân”", "“Người Việt Nam đều theo Phật giáo”", "“Việt Nam là quốc gia độc tôn Nho giáo”"], ["Hai hình tượng nào được nêu là ví dụ điển hình cho yếu tố Mẫu/Mẹ trong các tôn giáo ngoại nhập vào Việt Nam?", "Quán Thế Âm (Phật giáo) và Đức Mẹ Maria (Công giáo)", "Phật Thích Ca và Chúa Giêsu", "Ngọc Hoàng và Thái Thượng Lão Quân", "Đức Phật A Di Đà và Thánh Allah"], ["Vì sao yếu tố Mẫu/Mẹ được đề cao trong tâm thức người Việt?", "Do vai trò đặc biệt của phụ nữ trong nền nông nghiệp lúa nước, giáo dục gia đình và lịch sử giữ nước", "Do ảnh hưởng của Hồi giáo", "Do chính sách của Nhà nước phong kiến", "Do tôn giáo ngoại nhập áp đặt"], ["Tính đến năm 2025, Việt Nam có bao nhiêu tôn giáo, tổ chức tôn giáo được Nhà nước công nhận và cấp đăng ký hoạt động?", "16 tôn giáo với hơn 40 tổ chức", "13 tôn giáo với hơn 30 tổ chức", "16 tôn giáo với hơn 20 tổ chức", "40 tôn giáo với hơn 16 tổ chức"], ["Tính đến năm 2025, Việt Nam có trên 27 triệu tín đồ và bao nhiêu chức sắc?", "Hơn 66.000 chức sắc", "Hơn 30.000 chức sắc", "Hơn 120.000 chức sắc", "Hơn 6.000 chức sắc"], ["Khẩu hiệu “Nước vinh, đạo sáng” là đường hướng hành đạo của tôn giáo nào?", "Đạo Cao Đài", "Phật giáo", "Công giáo", "Phật giáo Hòa Hảo"], ["Khẩu hiệu “Đạo pháp - Dân tộc - Chủ nghĩa xã hội” là đường hướng hành đạo của tôn giáo nào?", "Phật giáo", "Công giáo", "Đạo Tin lành", "Đạo Cao Đài"], ["Đại lễ Vesak Liên hợp quốc của Phật giáo được tổ chức tại Việt Nam vào những năm nào?", "2008, 2014, 2019, 2025", "2000, 2005, 2010, 2015", "2008, 2012, 2017, 2023", "2014, 2017, 2019, 2023"], ["Đến năm 2025, cả nước có bao nhiêu cơ sở đào tạo chức sắc tôn giáo, trong đó bao nhiêu cơ sở trình độ đại học và sau đại học?", "66 cơ sở, trong đó 17 cơ sở", "17 cơ sở, trong đó 66 cơ sở", "24 cơ sở, trong đó 34 cơ sở", "66 cơ sở, trong đó 15 cơ sở"], ["Từ năm 2018 đến 2025, có bao nhiêu công trình tôn giáo được cấp phép xây dựng mới và cải tạo, nâng cấp?", "1.844 xây mới; 831 cải tạo, nâng cấp", "831 xây mới; 1.844 cải tạo, nâng cấp", "4.364 xây mới; 14.277 cải tạo", "1.261 xây mới; 882 cải tạo"], ["Từ năm 2018 đến 2024, Nhà xuất bản Tôn giáo đã cấp phép xuất bản cho bao nhiêu xuất bản phẩm?", "4.364 xuất bản phẩm", "1.844 xuất bản phẩm", "882 xuất bản phẩm", "15 xuất bản phẩm"], ["Số đảng viên là người có đạo tính đến năm 2024 là bao nhiêu và chiếm tỷ lệ nào trong tổng số đảng viên?", "82.751 người, chiếm 1,74%", "9.761 người, chiếm 5%", "82.751 người, chiếm 17,4%", "56 người, chiếm 1,74%"], ["Nhiệm kỳ Quốc hội khóa XV (2021-2026) có bao nhiêu chức sắc tôn giáo là đại biểu Quốc hội; khóa XVI (2026-2031) có bao nhiêu?", "5 chức sắc; 6 chức sắc", "6 chức sắc; 5 chức sắc", "56 chức sắc; 6 chức sắc", "9.761 chức sắc; 6 chức sắc"], ["Nhiệm kỳ 2024-2029, Ủy ban Trung ương Mặt trận Tổ quốc Việt Nam có bao nhiêu chức sắc tôn giáo tham gia?", "56 chức sắc", "397 chức sắc", "9.761 chức sắc", "5 chức sắc"], ["Trên lĩnh vực bảo vệ môi trường, cả nước hiện có bao nhiêu mô hình do các tổ chức tôn giáo xây dựng?", "1.014 mô hình", "1.261 mô hình", "800 mô hình", "500 mô hình"], ["Đạo Tin lành ở Tây Nguyên: năm 1975 có hơn 57.000 tín đồ là người dân tộc thiểu số, đến năm 2019 tăng lên bao nhiêu tín đồ ở Tây Nguyên và duyên hải miền Trung?", "639.990 tín đồ", "218.932 tín đồ", "958.067 tín đồ", "502.242 tín đồ"], ["Công giáo trong đồng bào dân tộc thiểu số: năm 2002 có 320.246 tín đồ, đến năm 2015 tăng lên bao nhiêu và hiện có trong bao nhiêu dân tộc thiểu số?", "502.242 tín đồ; 37 dân tộc", "588.542 tín đồ; 53 dân tộc", "502.242 tín đồ; 6 dân tộc", "320.246 tín đồ; 37 dân tộc"], ["Đến năm 2024, trong 2.523.231 tín đồ tôn giáo là người dân tộc thiểu số, tôn giáo nào có nhiều tín đồ nhất?", "Đạo Tin lành (958.067 tín đồ)", "Phật giáo (813.847 tín đồ)", "Công giáo (588.542 tín đồ)", "Hồi giáo (77.799 tín đồ)"], ["Từ năm 1985 đến năm 2025, ở Việt Nam có khoảng bao nhiêu hiện tượng tôn giáo mới?", "Gần 100 hiện tượng", "Gần 20.000 hiện tượng", "Gần 500 hiện tượng", "Gần 10 hiện tượng"], ["Hiện tượng tôn giáo mới ở Việt Nam xuất hiện nhiều nhất ở khu vực nào?", "Khu vực phía Bắc và Tây Nguyên", "Đồng bằng sông Cửu Long", "Khu vực Bắc Trung Bộ", "Các đô thị lớn ven biển"], ["Từ năm 1996 đến 2005, cả nước có bao nhiêu vụ khiếu kiện liên quan đến tôn giáo (tại 45/64 tỉnh, thành)?", "1.261 vụ", "882 vụ", "4.364 vụ", "2.523 vụ"], ["Trong các năm 2020-2025, cơ quan quản lý nhà nước về tôn giáo ở Trung ương tiếp nhận bao nhiêu đơn thư tố cáo, khiếu nại, kiến nghị liên quan đến tôn giáo?", "882 đơn thư", "1.261 đơn thư", "1.844 đơn thư", "831 đơn thư"], ["Định hướng nào đặt ra yêu cầu tiếp tục rà soát, bổ sung, cụ thể hóa hệ thống chính sách, pháp luật về tín ngưỡng, tôn giáo theo hướng đồng bộ, minh bạch, khả thi?", "Hoàn thiện chính sách, pháp luật về tín ngưỡng, tôn giáo phù hợp thực tiễn", "Đấu tranh chống lợi dụng tôn giáo", "Nhận thức và ứng xử với hiện tượng tôn giáo mới", "Nâng cao nhận thức của hệ thống chính trị về tôn giáo"], ["Giáo trình yêu cầu đấu tranh chống lợi dụng tôn giáo được triển khai như thế nào?", "Chủ động, kiên quyết nhưng thận trọng", "Cứng rắn, xử lý hành chính là chính", "Thụ động, chờ phát sinh vụ việc", "Cấm đoán mọi hoạt động tôn giáo"], ["Khi ứng xử với các hiện tượng tôn giáo mới, hệ thống chính trị cần làm gì?", "Nhận diện khách quan, khoa học; phân biệt rõ nhu cầu tín ngưỡng chính đáng với biểu hiện lợi dụng tôn giáo để có phương thức ứng xử linh hoạt", "Coi mọi hiện tượng tôn giáo mới là phản động", "Công nhận ngay tất cả hiện tượng tôn giáo mới", "Không quan tâm vì tự suy thoái"], ["Khắc phục những biểu hiện nhận thức phiến diện, cực đoan hoặc hành chính hóa trong xử lý các vấn đề liên quan đến tôn giáo thuộc định hướng nào?", "Nâng cao nhận thức của hệ thống chính trị về tôn giáo", "Đảm bảo quyền tự do tín ngưỡng, tôn giáo", "Đấu tranh chống lợi dụng tôn giáo", "Hoàn thiện chính sách, pháp luật"]]; // mỗi câu: [câu hỏi, đáp án đúng, sai1, sai2, sai3]
+const $ = id => document.getElementById(id);
+const L = ["A","B","C","D"];
+let list=[], i=0, student="", instant=false, timer=null, endAt=0, totalSec=0, startAt=0;
+
+function shuf(a){a=a.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]];}return a;}
+function show(id){["start","quiz","result"].forEach(s=>$(s).classList.toggle("hide",s!==id));window.scrollTo(0,0);}
+function ls(op,k,v){try{return op==="g"?localStorage.getItem(k):localStorage.setItem(k,v);}catch(e){return null;}}
+
+$("total").textContent = DATA.length;
+$("name").value = ls("g","tg_name")||"";
+const NQ=20;
+[0.5,1,1.5,2,3].forEach(m=>{
+  const o=document.createElement("option");o.value=m;o.textContent=(m+"").replace(".",",")+" phút/câu";if(m===1)o.selected=true;$("tpq").appendChild(o);
+});
+function fmt(sec){sec=Math.max(0,Math.round(sec));const m=Math.floor(sec/60),r=sec%60;return String(m).padStart(2,"0")+":"+String(r).padStart(2,"0");}
+function sumTime(){const t=parseFloat($("tpq").value)*NQ*60;$("tsum").textContent="Tổng thời gian: "+Math.round(t/60*10)/10+" phút ("+fmt(t)+")";}
+$("tpq").onchange=sumTime;sumTime();
+function showBest(){const b=ls("g","tg_best");$("best").textContent=b?"Kết quả tốt nhất lần trước: "+b:"";}
+showBest();
+$("name").addEventListener("input",()=>$("nameErr").classList.add("hide"));
+
+function answered(){return list.filter(q=>q.chosen!==undefined).length;}
+function render(){
+  const q=list[i];
+  const locked=instant&&q.chosen!==undefined;
+  $("pos").textContent="Câu "+(i+1)+"/"+list.length;
+  $("sc").textContent="Đã trả lời: "+answered()+"/"+list.length;
+  $("pb").style.width=(i/list.length*100)+"%";
+  $("qt").textContent=q.q;
+  $("fb").textContent="";$("fb").className="fb";
+  $("prev").disabled=i===0;
+  $("prev").classList.toggle("hide",instant);
+  $("next").textContent=i===list.length-1?"Nộp bài":"Câu tiếp";
+  $("next").disabled=instant&&q.chosen===undefined;
+  const box=$("opts");box.innerHTML="";
+  q.opts.forEach((t,k)=>{
+    const b=document.createElement("button");b.className="opt";
+    b.innerHTML='<b class="l">'+L[k]+'.</b><span></span>';
+    b.lastChild.textContent=t;
+    if(locked){
+      b.disabled=true;
+      if(k===q.ans)b.classList.add("ok");
+      else if(k===q.chosen)b.classList.add("no");
+    }else if(q.chosen===k){b.classList.add("sel");}
+    b.onclick=()=>pick(k);
+    box.appendChild(b);
+  });
+  if(locked){
+    if(q.chosen===q.ans){$("fb").textContent="Chính xác!";$("fb").classList.add("ok");}
+    else{$("fb").textContent="Chưa đúng. Đáp án đúng: "+L[q.ans]+". "+q.opts[q.ans];$("fb").classList.add("no");}
+  }
+}
+function pick(k){
+  const q=list[i];
+  if(instant&&q.chosen!==undefined)return;
+  q.chosen=k;
+  render();
+}
+function submit(){
+  const left=list.length-answered();
+  const msg=left>0?"Bạn còn "+left+" câu chưa trả lời. Bạn có chắc chắn muốn nộp bài và xem kết quả?":"Bạn có chắc chắn muốn nộp bài và xem kết quả?";
+  if(!confirm(msg))return;
+  finish(false);
+}
+function finish(auto){
+  stopTimer();
+  const used=Math.min(totalSec,Math.round((Date.now()-startAt)/1000));
+  show("result");
+  $("tnote").classList.toggle("hide",!auto);
+  $("tnote").textContent=auto?"Hết giờ! Bài làm đã được nộp tự động.":"";
+  $("ru").textContent="Thời gian làm bài: "+fmt(used)+" / "+fmt(totalSec);
+  const score=list.filter(q=>q.chosen===q.ans).length;
+  const wrong=list.filter(q=>q.chosen!==q.ans);
+  const pct=Math.round(score/list.length*100);
+  $("rn").textContent=student;
+  $("rs").textContent=score+"/"+list.length;
+  $("rm").textContent="Tỷ lệ đúng: "+pct+"%. "+(pct>=80?"Rất tốt! Bạn nắm bài chắc rồi.":pct>=50?"Khá ổn, ôn lại các câu sai nhé.":"Cần ôn thêm, hãy xem lại các câu sai bên dưới.");
+  const prev=parseInt(ls("g","tg_bestpct")||"-1");
+  if(pct>(isNaN(prev)?-1:prev)){ls("s","tg_bestpct",pct);ls("s","tg_best",pct+"% ("+score+"/"+list.length+") - "+student);}
+  const wb=$("wrongBox"), wl=$("wl");wl.innerHTML="";
+  wb.classList.toggle("hide",!wrong.length);
+  $("redo").classList.toggle("hide",!wrong.length);
+  wrong.forEach((q,n)=>{
+    const d=document.createElement("div");d.className="wr";
+    const a=document.createElement("div");a.textContent=(n+1)+". "+q.q;a.style.fontWeight="600";
+    const y=document.createElement("div");y.className="y"+(q.chosen===undefined?" n":"");
+    y.textContent=q.chosen===undefined?"Bạn chưa trả lời":"Bạn chọn: "+q.opts[q.chosen];
+    const c=document.createElement("div");c.className="a";c.textContent="Đáp án đúng: "+q.opts[q.ans];
+    d.append(a,y,c);wl.appendChild(d);
+  });
+}
+function build(src){
+  return src.map(r=>{
+    const opts=$("shuffleA").checked?shuf(r.slice(1)):r.slice(1);
+    return {q:r[0],opts:opts,ans:opts.indexOf(r[1])};
+  });
+}
+function stopTimer(){if(timer){clearInterval(timer);timer=null;}}
+function tick(){
+  const left=Math.ceil((endAt-Date.now())/1000);
+  $("tm").textContent="⏱ "+fmt(left);
+  $("tm").classList.toggle("low",left<=60);
+  if(left<=0){stopTimer();finish(true);}
+}
+function start(items){
+  list=items;i=0;
+  totalSec=Math.round(parseFloat($("tpq").value)*items.length*60);
+  startAt=Date.now();endAt=startAt+totalSec*1000;
+  stopTimer();timer=setInterval(tick,500);
+  show("quiz");render();tick();
+}
+$("go").onclick=()=>{
+  student=$("name").value.trim().replace(/\s+/g," ");
+  if(!student){$("nameErr").classList.remove("hide");$("name").focus();return;}
+  ls("s","tg_name",student);
+  instant=$("instant").checked;
+  let src=$("shuffleQ").checked?shuf(DATA):DATA.slice();
+  src=src.slice(0,NQ);
+  start(build(src));
+};
+$("next").onclick=()=>{ if(i<list.length-1){i++;render();}else submit(); };
+$("prev").onclick=()=>{ if(i>0){i--;render();} };
+$("quit").onclick=()=>{ if(confirm("Thoát bài làm hiện tại? Kết quả sẽ không được lưu.")){stopTimer();show("start");showBest();} };
+$("again").onclick=()=>$("go").click();
+$("redo").onclick=()=>{
+  const src=list.filter(q=>q.chosen!==q.ans).map(q=>[q.q,q.opts[q.ans],...q.opts.filter((_,k)=>k!==q.ans)]);
+  start(build(shuf(src)));
+};
+$("home").onclick=()=>{stopTimer();show("start");showBest();};
+</script>
+</body>
+</html>
